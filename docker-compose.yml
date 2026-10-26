@@ -1,13 +1,15 @@
 services:
   console:
     container_name: oasm-console
-    image: oasm/oasm-console:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.console
+      args:
+        IMAGE_TAG: ${IMAGE_TAG:-latest}
     networks:
       - oasm
     ports:
       - '6276:80'
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     restart: on-failure
     depends_on:
       core-api:
@@ -27,7 +29,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - POSTGRES_DB=${POSTGRES_DB:-open_asm}
       - POSTGRES_SSL=${POSTGRES_SSL:-false}
-      - PORT=${PORT:-6276}
+      - PORT=6277
       - OASM_CLOUD_APIKEY=${OASM_CLOUD_APIKEY}
       - REDIS_URL=${REDIS_URL:-redis://:open_asm@redis:6379/0}
       - GEO_IP_URL=geo-ip-database:4360
@@ -45,7 +47,7 @@ services:
       migration:
         condition: service_completed_successfully
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:${PORT:-6276}/api/health']
+      test: ['CMD', 'curl', '-f', 'http://localhost:6277/api/health']
       interval: 1s
       timeout: 60s
       retries: 10
