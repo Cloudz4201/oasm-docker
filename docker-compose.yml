@@ -1,6 +1,5 @@
 services:
   console:
-    container_name: oasm-console
     build:
       context: .
       dockerfile: Dockerfile.console
@@ -16,7 +15,6 @@ services:
         condition: service_healthy
 
   core-api:
-    container_name: oasm-api
     image: oasm/oasm-api:${IMAGE_TAG:-latest}
     networks:
       - oasm
@@ -53,7 +51,6 @@ services:
       retries: 10
 
   rustfs:
-    container_name: oasm-rustfs
     image: rustfs/rustfs:latest
     networks:
       - oasm
@@ -71,7 +68,6 @@ services:
     command: ['/data']
 
   migration:
-    container_name: oasm-migration
     image: oasm/oasm-api:${IMAGE_TAG:-latest}
     networks:
       - oasm
@@ -135,7 +131,6 @@ services:
   # Scale workers only by giving each a distinct WORKER_CONNECTOR_ADDR/port.
 
   postgres:
-    container_name: oasm-postgres
     image: postgres:17
     restart: on-failure
     environment:
@@ -153,7 +148,6 @@ services:
       retries: 10
 
   redis:
-    container_name: oasm-redis
     image: redis:alpine
     restart: on-failure
     networks:
@@ -179,7 +173,6 @@ services:
           memory: 512M
 
   geo-ip-database:
-    container_name: geo-ip-database
     image: ghcr.io/l1ttps/geoip-proxy:latest
     platform: linux/amd64
     networks:
@@ -203,4 +196,3 @@ volumes:
 networks:
   oasm:
     driver: bridge
-    name: oasm_net
